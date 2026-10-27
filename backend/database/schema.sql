@@ -1,7 +1,8 @@
 
 -- ClinicFlow: schema PostgreSQL
 
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- PostgreSQL extension required for gen_random_uuid()
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 -- 1. Users: admin and staff accounts
 CREATE TABLE users (
