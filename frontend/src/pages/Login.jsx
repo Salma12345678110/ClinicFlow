@@ -1,32 +1,44 @@
 
-import { useState } from 'react';
-import { apiRequest } from '../services/api';
-import './Login.css';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { apiRequest } from "../services/api";
+import "./Login.css";
 
 export default function Login({ onLogin }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
 
     try {
-      const data = await apiRequest('/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
+      const data = await apiRequest("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
-      localStorage.setItem('token', data.token);
+      if (!data?.token) {
+        throw new Error("Le serveur n'a pas renvoyé de token.");
+      }
 
-      const currentUser = await apiRequest('/auth/me');
-      onLogin(data.user || currentUser.user);
+      localStorage.setItem("token", data.token);
+
+      const currentUser = await apiRequest("/auth/me");
+      const user = data.user || currentUser.user || currentUser;
+
+      localStorage.setItem("user", JSON.stringify(user));
+      onLogin(user);
+      navigate("/dashboard");
     } catch (err) {
-      localStorage.removeItem('token');
-      setError(err.message || 'Impossible de se connecter.');
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setError(err.message || "Impossible de se connecter.");
     } finally {
       setLoading(false);
     }
@@ -75,6 +87,12 @@ export default function Login({ onLogin }) {
             Entrez vos identifiants pour accéder à votre espace.
           </p>
 
+          {error && (
+            <div className="login-error" role="alert">
+              {error}
+            </div>
+          )}
+
           <div className="form-group">
             <label htmlFor="email">Adresse e-mail</label>
             <input
@@ -82,7 +100,7 @@ export default function Login({ onLogin }) {
               type="email"
               placeholder="nom@clinique.com"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               autoComplete="username"
               required
             />
@@ -95,25 +113,24 @@ export default function Login({ onLogin }) {
               type="password"
               placeholder="Entrez votre mot de passe"
               value={password}
-              onChange={e => setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               autoComplete="current-password"
               required
             />
           </div>
 
-          {error && (
-            <div className="login-error" role="alert">
-              {error}
-            </div>
-          )}
-
-          <button className="login-button" type="submit" disabled={loading}>
-            {loading ? 'Connexion en cours...' : 'Se connecter'}
+          <button
+            className="login-button"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Connexion en cours..." : "Se connecter"}
             {!loading && <span aria-hidden="true"> →</span>}
           </button>
 
           <p className="security-note">
-            <span>🔒</span> Accès réservé au personnel autorisé
+            <span aria-hidden="true">🔒</span>
+            Accès réservé au personnel autorisé
           </p>
         </form>
 

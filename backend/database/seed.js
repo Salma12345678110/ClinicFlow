@@ -13,16 +13,44 @@ const pool = new Pool({
 
 async function seed() {
   try {
-    const passwordHash = await bcrypt.hash('Admin1234!', 10);
+    const accounts = [
+      {
+        fullName: 'Administrateur ClinicFlow',
+        email: 'admin@clinicflow.com',
+        password: 'Admin1234!',
+        role: 'admin',
+      },
+      {
+        fullName: 'Sara Staff',
+        email: 'sara@clinicflow.com',
+        password: 'Staff1234!',
+        role: 'staff',
+      },
+      {
+        fullName: 'Amine Staff',
+        email: 'amine@clinicflow.com',
+        password: 'Staff5678!',
+        role: 'staff',
+      },
+    ];
 
-    await pool.query(
-      `INSERT INTO users (full_name, email, password_hash, role)
-       VALUES ($1, $2, $3, $4)
-       ON CONFLICT (email) DO NOTHING`,
-      ['Administrateur ClinicFlow', 'admin@clinicflow.com', passwordHash, 'admin']
-    );
+    for (const account of accounts) {
+      const passwordHash = await bcrypt.hash(account.password, 10);
 
-    console.log('Compte administrateur créé ou déjà présent.');
+      await pool.query(
+        `INSERT INTO users (full_name, email, password_hash, role)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (email) DO NOTHING`,
+        [
+          account.fullName,
+          account.email,
+          passwordHash,
+          account.role,
+        ]
+      );
+    }
+
+    console.log('Comptes de test créés ou déjà présents.');
   } catch (error) {
     console.error('Erreur pendant le seed :', error.message);
     process.exitCode = 1;

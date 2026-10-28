@@ -1,5 +1,5 @@
-
 const authService = require('../services/authService');
+const pool = require('../config/db');
 
 async function login(req, res) {
   try {
@@ -22,11 +22,43 @@ async function login(req, res) {
     return res.status(200).json(result);
   } catch (error) {
     console.error('Erreur login :', error);
-
     return res.status(500).json({
       message: 'Erreur interne du serveur',
     });
   }
 }
 
-module.exports = { login };
+async function me(req, res) {
+  try {
+    const result = await pool.query(
+      `SELECT id, full_name, email, role
+       FROM users
+       WHERE id = $1`,
+      [req.user.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: 'Utilisateur introuvable',
+      });
+    }
+
+    const user = result.rows[0];
+
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        fullName: user.full_name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error('Erreur auth/me :', error);
+    return res.status(500).json({
+      message: 'Erreur interne du serveur',
+    });
+  }
+}
+
+module.exports = { login, me };

@@ -1,4 +1,3 @@
-
 const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -16,6 +15,7 @@ async function login(email, password) {
   }
 
   const user = result.rows[0];
+
   const passwordIsValid = await bcrypt.compare(
     password,
     user.password_hash
@@ -26,7 +26,10 @@ async function login(email, password) {
   }
 
   const token = jwt.sign(
-    { id: user.id, role: user.role },
+    {
+      id: user.id,
+      role: user.role,
+    },
     process.env.JWT_SECRET,
     { expiresIn: '1d' }
   );
