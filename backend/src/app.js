@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -5,6 +6,7 @@ require('dotenv').config();
 const pool = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboard.routes');
+const patientRoutes = require('./routes/patient.routes');
 
 const app = express();
 
@@ -19,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/patients', patientRoutes);
 
 pool.query('SELECT NOW()')
   .then((result) => {

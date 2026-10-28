@@ -9,6 +9,7 @@ import {
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Patients from "./pages/Patients";
 
 function AppContent() {
   const [user, setUser] = useState(() => {
@@ -34,6 +35,7 @@ function AppContent() {
 
   return (
     <Routes>
+      {/* Page de connexion */}
       <Route
         path="/login"
         element={
@@ -45,17 +47,37 @@ function AppContent() {
         }
       />
 
+      {/* Tableau de bord */}
       <Route
         path="/dashboard"
         element={
           user ? (
-            <Dashboard user={user} onLogout={handleLogout} />
+            <Dashboard
+              user={user}
+              onLogout={handleLogout}
+            />
           ) : (
             <Navigate to="/login" replace />
           )
         }
       />
 
+      {/* Gestion des patients */}
+      <Route
+        path="/patients"
+        element={
+          user ? (
+            <Patients
+              user={user}
+              onLogout={handleLogout}
+            />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      {/* Redirection des autres adresses */}
       <Route
         path="*"
         element={
