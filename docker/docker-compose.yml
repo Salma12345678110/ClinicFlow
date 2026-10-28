@@ -1,0 +1,70 @@
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: clinicflow-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: clinicflow
+      POSTGRES_USER: clinicflow
+      POSTGRES_PASSWORD: clinicflow_dev_password
+    volumes:
+      - clinicflow_data:/var/lib/postgresql/data
+      - ../backend/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U clinicflow -d clinicflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  seed:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    command: ["node", "database/seed.js"]
+    restart: "no"
+    environment:
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: clinicflow
+      DB_USER: clinicflow
+      DB_PASSWORD: clinicflow_dev_password
+    depends_on:
+      database:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.backend
+    container_name: clinicflow-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: clinicflow
+      DB_USER: clinicflow
+      DB_PASSWORD: clinicflow_dev_password
+      JWT_SECRET: change_this_secret_before_production
+    ports:
+      - "5000:5000"
+    depends_on:
+      database:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.frontend
+    container_name: clinicflow-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  clinicflow_data:
