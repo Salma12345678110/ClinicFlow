@@ -1,6 +1,10 @@
-
 const pool = require("../config/db");
 const { patientSchema } = require("../validators/patient.validator");
+
+// Vérifier si l'identifiant est un UUID valide
+function isValidUUID(id) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
+}
 
 // Ajouter un patient
 async function createPatient(req, res) {
@@ -105,6 +109,12 @@ async function getPatients(req, res) {
 
 // Afficher un patient par son identifiant
 async function getPatientById(req, res) {
+  if (!isValidUUID(req.params.id)) {
+    return res.status(400).json({
+      message: "Identifiant du patient invalide.",
+    });
+  }
+
   try {
     const result = await pool.query(
       `SELECT id, full_name, cin, phone, birth_date, address, created_at
@@ -133,6 +143,12 @@ async function getPatientById(req, res) {
 
 // Modifier un patient
 async function updatePatient(req, res) {
+  if (!isValidUUID(req.params.id)) {
+    return res.status(400).json({
+      message: "Identifiant du patient invalide.",
+    });
+  }
+
   try {
     const validation = patientSchema.safeParse(req.body);
 
@@ -195,6 +211,12 @@ async function updatePatient(req, res) {
 
 // Supprimer un patient
 async function deletePatient(req, res) {
+  if (!isValidUUID(req.params.id)) {
+    return res.status(400).json({
+      message: "Identifiant du patient invalide.",
+    });
+  }
+
   try {
     const result = await pool.query(
       `DELETE FROM patients
