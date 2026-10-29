@@ -10,6 +10,7 @@ import {
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
+import Appointments from "./pages/Appointments";
 
 function AppContent() {
   const [user, setUser] = useState(() => {
@@ -52,10 +53,7 @@ function AppContent() {
         path="/dashboard"
         element={
           user ? (
-            <Dashboard
-              user={user}
-              onLogout={handleLogout}
-            />
+            <Dashboard user={user} onLogout={handleLogout} />
           ) : (
             <Navigate to="/login" replace />
           )
@@ -67,10 +65,19 @@ function AppContent() {
         path="/patients"
         element={
           user ? (
-            <Patients
-              user={user}
-              onLogout={handleLogout}
-            />
+            <Patients user={user} onLogout={handleLogout} />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
+      {/* Gestion des rendez-vous */}
+      <Route
+        path="/appointments"
+        element={
+          user ? (
+            <Appointments user={user} onLogout={handleLogout} />
           ) : (
             <Navigate to="/login" replace />
           )

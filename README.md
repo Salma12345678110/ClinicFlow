@@ -4,14 +4,14 @@
 
 ClinicFlow est une application web de gestion de clinique développée avec React, Node.js, Express.js et PostgreSQL.
 
-Elle permet de gérer les patients, les rendez-vous et les utilisateurs, tout en assurant l'authentification et le contrôle des autorisations.
+Elle permet de gérer les patients, les rendez-vous et les utilisateurs, avec un système d'authentification et de contrôle des autorisations.
 
 ## 2. Technologies utilisées
 
 - **Frontend :** React et Vite
 - **Backend :** Node.js et Express.js
 - **Base de données :** PostgreSQL
-- **Connexion à la base de données :** pg
+- **Accès à la base de données :** pg
 - **Authentification :** JWT
 - **Hachage des mots de passe :** bcrypt
 - **Validation des données :** Zod
@@ -23,14 +23,14 @@ Elle permet de gérer les patients, les rendez-vous et les utilisateurs, tout en
 - Authentification des utilisateurs.
 - Gestion des rôles `admin` et `staff`.
 - Gestion des patients : création, consultation, modification et suppression selon les autorisations.
-- Recherche des patients par nom ou CIN avec pagination.
+- Recherche des patients par nom ou CIN et pagination.
 - Création et consultation des rendez-vous.
 - Filtrage des rendez-vous par date et statut.
 - Modification du statut des rendez-vous.
 - Prévention des conflits entre rendez-vous confirmés pour un même patient.
-- Statistiques pour le tableau de bord.
+- Tableau de bord avec les principales statistiques de la clinique.
 
-*Remarque : seules les fonctionnalités effectivement implémentées et testées sont considérées comme disponibles.*
+
 
 ## 4. Structure du projet
 
@@ -64,12 +64,15 @@ ClinicFlow/
 
 ## 5. Prérequis
 
-Pour lancer l'application avec Docker, il faut :
+Pour utiliser l'application avec Docker :
 
 - Git
-- Docker Desktop avec Docker Compose
+- Docker Desktop
+- Docker Compose
 
-Node.js et PostgreSQL ne doivent pas être installés séparément sur l'ordinateur pour le lancement avec Docker.
+Node.js et PostgreSQL peuvent fonctionner dans les conteneurs, sans installation séparée sur l'ordinateur.
+
+Pour une installation manuelle, Node.js, npm et PostgreSQL sont nécessaires.
 
 ## 6. Installation et lancement avec Docker
 
@@ -80,59 +83,65 @@ git clone https://github.com/Salma12345678110/ClinicFlow.git
 cd ClinicFlow
 ```
 
-### Étape 2 : Démarrer l'application
+### Étape 2 : Démarrer Docker Desktop
 
-Démarrer Docker Desktop, puis exécuter la commande suivante depuis la racine du projet :
+Lancer Docker Desktop et attendre que le moteur Docker soit opérationnel.
+
+### Étape 3 : Démarrer l'application
+
+Depuis la racine du projet, exécuter :
 
 ```bash
 docker compose -f ./docker/docker-compose.yml up --build
 ```
 
-Docker Compose démarre automatiquement les services suivants :
+Cette commande construit les images si nécessaire et démarre les services définis dans le fichier Docker Compose.
 
-- **PostgreSQL :** création de la base de données `clinicflow`.
-- **Schéma SQL :** création des tables à partir de `backend/database/schema.sql` lors de la première initialisation de la base.
-- **Seed :** création du compte administrateur de démonstration.
-- **Backend :** démarrage de l'API Node.js et Express.js.
-- **Frontend :** démarrage de l'interface React.
+Selon la configuration du projet, les services peuvent inclure :
 
-Aucune création manuelle de la base de données n'est nécessaire pour ce lancement.
+- PostgreSQL : serveur de base de données.
+- Backend : API Node.js et Express.js.
+- Frontend : interface React et Vite.
 
-### Étape 3 : Accéder à l'application
+Le schéma SQL et les données de démonstration sont initialisés uniquement si la configuration Docker prévoit ces opérations.
+
+### Étape 4 : Accéder à l'application
+
+Si les ports indiqués dans la configuration sont ceux utilisés par défaut dans ce projet :
 
 - **Frontend :** http://localhost:5173
 - **Page de connexion :** http://localhost:5173/login
 - **Backend :** http://localhost:5000
 
-Les identifiants de démonstration sont ceux configurés dans `backend/database/seed.js`.
+Les identifiants de démonstration sont définis dans le script de seed, si celui-ci est exécuté par la configuration.
 
-### Étape 4 : Arrêter l'application
+### Étape 5 : Arrêter l'application
 
-Dans un autre terminal, depuis la racine du projet, exécuter :
+Pour arrêter les conteneurs :
 
 ```bash
 docker compose -f ./docker/docker-compose.yml down
 ```
 
-Cette commande arrête et supprime les conteneurs du projet, mais conserve les données enregistrées dans le volume PostgreSQL.
-
-Pour supprimer également les données de la base Docker :
+Pour supprimer également les volumes associés, notamment les données PostgreSQL :
 
 ```bash
 docker compose -f ./docker/docker-compose.yml down -v
 ```
 
-**Attention :** cette dernière commande supprime le volume de données associé à cette configuration.
+**Attention :** la seconde commande peut supprimer définitivement les données enregistrées dans les volumes concernés.
 
-## 7. Installation manuelle (alternative)
+## 7. Installation manuelle
 
 ### Étape 1 : Créer la base de données
 
-Installer PostgreSQL, créer une base nommée `clinicflow`, puis exécuter :
+Créer une base PostgreSQL nommée `clinicflow`, puis exécuter le script SQL depuis la racine du projet :
 
 ```bash
 psql -U postgres -d clinicflow -f backend/database/schema.sql
 ```
+
+Cette commande crée les tables, les contraintes et les index définis dans le schéma.
 
 ### Étape 2 : Installer les dépendances du backend
 
@@ -143,9 +152,9 @@ npm install
 
 ### Étape 3 : Configurer les variables d'environnement
 
-Créer un fichier `.env` dans le dossier `backend` à partir de `.env.example`, puis renseigner les paramètres de connexion à PostgreSQL et le secret JWT.
+Créer un fichier `.env` dans le dossier `backend`, en s'inspirant du fichier `.env.example`.
 
-Exemple :
+Exemple de configuration :
 
 ```env
 PORT=5000
@@ -157,7 +166,17 @@ DB_PASSWORD=your_postgres_password
 JWT_SECRET=your_long_random_secret
 ```
 
-Remplacer les valeurs d'exemple par celles de votre environnement. Ne jamais publier le fichier `.env` réel.
+Remplacer les valeurs d'exemple par celles de votre environnement.
+
+- `PORT` : port du serveur backend.
+- `DB_HOST` : adresse du serveur PostgreSQL.
+- `DB_PORT` : port PostgreSQL.
+- `DB_NAME` : nom de la base de données.
+- `DB_USER` : utilisateur PostgreSQL.
+- `DB_PASSWORD` : mot de passe PostgreSQL.
+- `JWT_SECRET` : secret utilisé pour signer les jetons JWT.
+
+Ne jamais publier le fichier `.env` contenant des informations sensibles.
 
 ### Étape 4 : Lancer le backend
 
@@ -167,15 +186,15 @@ Depuis le dossier `backend` :
 npm run dev
 ```
 
-Pour lancer le serveur en mode standard :
+Pour un lancement standard, si le script correspondant existe :
 
 ```bash
 npm start
 ```
 
-### Étape 5 : Lancer le frontend
+### Étape 5 : Installer et lancer le frontend
 
-Dans un autre terminal :
+Ouvrir un deuxième terminal, depuis la racine du projet :
 
 ```bash
 cd frontend
@@ -183,19 +202,34 @@ npm install
 npm run dev
 ```
 
-Si nécessaire, configurer `VITE_API_URL` dans l'environnement du frontend pour pointer vers `http://localhost:5000/api`.
+Si nécessaire, configurer `VITE_API_URL` selon le mécanisme utilisé par le frontend. Pour une API accessible localement, l'URL de base peut être :
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Vérifier que le code frontend utilise bien cette variable et que le backend autorise les requêtes provenant de l'origine du frontend.
 
 ## 8. Base de données
 
-Le projet utilise les tables suivantes :
+La base de données comprend les tables suivantes :
 
-- **users :** comptes utilisateurs et rôles.
-- **patients :** informations des patients.
-- **appointments :** rendez-vous et statuts.
+- **users :** comptes utilisateurs, adresses email et rôles.
+- **patients :** informations personnelles des patients.
+- **appointments :** rendez-vous, dates, statuts et relations avec les patients et les utilisateurs.
 
-Le script de création se trouve dans `backend/database/schema.sql`.
+Le script de création des tables est disponible dans `backend/database/schema.sql`.
 
-La documentation du schéma et le diagramme entité-relation sont disponibles dans `docs/database-erd.md`.
+Le diagramme entité-relation et la description des relations sont disponibles dans `docs/database-erd.md`.
+
+Pour initialiser les données de démonstration, exécuter le script prévu à cet effet si nécessaire :
+
+```bash
+cd backend
+node database/seed.js
+```
+
+Cette commande suppose que le fichier `.env` est correctement configuré et que PostgreSQL est accessible.
 
 ## 9. Sécurité
 
@@ -203,10 +237,10 @@ La documentation du schéma et le diagramme entité-relation sont disponibles da
 - Authentification par JWT.
 - Contrôle des autorisations selon le rôle.
 - Validation des données avec Zod.
-- Contraintes de base de données pour préserver l'intégrité des données.
+- Contraintes SQL pour préserver l'intégrité des données.
 - Utilisation de variables d'environnement pour les informations sensibles.
 
-Les secrets et mots de passe de démonstration doivent être réservés au développement et sécurisés avant toute mise en production.
+Les mots de passe et secrets de démonstration sont réservés au développement. Ils doivent être remplacés par des valeurs sécurisées avant toute mise en production.
 
 ## 10. Auteur
 

@@ -1,31 +1,47 @@
-
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
 const pool = require('./config/db');
+
 const authRoutes = require('./routes/authRoutes');
 const dashboardRoutes = require('./routes/dashboard.routes');
 const patientRoutes = require('./routes/patient.routes');
+const appointmentRoutes = require('./routes/appointment.routes');
 
 const app = express();
 
+// Middlewares globaux
 app.use(cors());
 app.use(express.json());
 
+// Route d'accueil
 app.get('/', (req, res) => {
-  res.json({
+  res.status(200).json({
     message: 'Bienvenue sur l API ClinicFlow',
   });
 });
 
+// Routes de l'API
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/patients', patientRoutes);
+app.use('/api/appointments', appointmentRoutes);
 
+// Route pour les endpoints inexistants
+app.use((req, res) => {
+  res.status(404).json({
+    message: 'Route introuvable.',
+  });
+});
+
+// Vérification de la connexion PostgreSQL
 pool.query('SELECT NOW()')
   .then((result) => {
-    console.log('Base de données connectée !', result.rows[0]);
+    console.log(
+      'Base de données connectée !',
+      result.rows[0]
+    );
   })
   .catch((error) => {
     console.error(
@@ -34,8 +50,11 @@ pool.query('SELECT NOW()')
     );
   });
 
+// Démarrage du serveur
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Serveur ClinicFlow démarré sur le port ${PORT}`);
+  console.log(
+    `Serveur ClinicFlow démarré sur le port ${PORT}`
+  );
 });
