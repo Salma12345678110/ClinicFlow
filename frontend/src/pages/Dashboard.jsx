@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Dashboard.css";
@@ -94,19 +93,19 @@ function Dashboard({ user, onLogout }) {
           <Link to="/appointments" className="nav-link">
             <span>📅</span> Rendez-vous
           </Link>
-
-          <Link to="/users" className="nav-link">
-            <span>👤</span> Utilisateurs
-          </Link>
         </nav>
 
         <div className="sidebar-bottom">
           <div className="profile-avatar">
-            {(user?.name || user?.nom || "A").charAt(0).toUpperCase()}
+            {(user?.name || user?.nom || "A")
+              .charAt(0)
+              .toUpperCase()}
           </div>
 
           <div className="profile-info">
-            <strong>{user?.name || user?.nom || "Administrateur"}</strong>
+            <strong>
+              {user?.name || user?.nom || "Administrateur"}
+            </strong>
             <span>{user?.role || "ClinicFlow"}</span>
           </div>
         </div>
@@ -142,7 +141,9 @@ function Dashboard({ user, onLogout }) {
           <div className="section-heading">
             <div>
               <h2>Vue d'ensemble</h2>
-              <p>Voici les principales statistiques de votre clinique.</p>
+              <p>
+                Voici les principales statistiques de votre clinique.
+              </p>
             </div>
           </div>
 
@@ -159,7 +160,9 @@ function Dashboard({ user, onLogout }) {
 
                 <div className="stat-info">
                   <p>{card.title}</p>
-                  <h3>{loading ? "..." : card.value ?? 0}</h3>
+                  <h3>
+                    {loading ? "..." : card.value ?? 0}
+                  </h3>
                 </div>
 
                 <span className="stat-arrow">↗</span>
@@ -169,7 +172,9 @@ function Dashboard({ user, onLogout }) {
 
           <section className="quick-section">
             <h2>Accès rapide</h2>
-            <p>Accédez rapidement aux fonctionnalités principales.</p>
+            <p>
+              Accédez rapidement aux fonctionnalités principales.
+            </p>
 
             <div className="quick-grid">
               <Link to="/patients" className="quick-card">
@@ -186,15 +191,6 @@ function Dashboard({ user, onLogout }) {
                 <div>
                   <strong>Gestion des rendez-vous</strong>
                   <p>Consulter les rendez-vous</p>
-                </div>
-                <span className="quick-arrow">→</span>
-              </Link>
-
-              <Link to="/users" className="quick-card">
-                <span>👤</span>
-                <div>
-                  <strong>Gestion des utilisateurs</strong>
-                  <p>Gérer les comptes utilisateurs</p>
                 </div>
                 <span className="quick-arrow">→</span>
               </Link>

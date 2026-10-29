@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect, useState } from "react";
 import { apiRequest } from "../services/api";
 import "./Patients.css";
@@ -76,6 +75,7 @@ export default function Patients({ onLogout }) {
       );
 
       const data = response?.data ?? response;
+
       const list = Array.isArray(data?.patients)
         ? data.patients
         : Array.isArray(data)
@@ -115,7 +115,7 @@ export default function Patients({ onLogout }) {
     setForm({
       fullName: patient.full_name ?? patient.fullName ?? "",
       cin: patient.cin ?? "",
-      phone: patient.phone ?? "",
+      phone: String(patient.phone ?? ""),
       birthDate: String(
         patient.birth_date ?? patient.birthDate ?? ""
       ).slice(0, 10),
@@ -138,9 +138,14 @@ export default function Patients({ onLogout }) {
   function handleChange(event) {
     const { name, value } = event.target;
 
+    // Le téléphone accepte uniquement les chiffres.
+    // Les autres champs restent inchangés.
+    const newValue =
+      name === "phone" ? value.replace(/\D/g, "") : value;
+
     setForm((previous) => ({
       ...previous,
-      [name]: value,
+      [name]: newValue,
     }));
   }
 
@@ -149,8 +154,21 @@ export default function Patients({ onLogout }) {
     setError("");
     setSuccess("");
 
-    if (!form.fullName.trim() || !form.cin.trim()) {
-      setError("Le nom complet et la CIN sont obligatoires.");
+    if (
+      !form.fullName.trim() ||
+      !form.cin.trim() ||
+      !form.phone.trim() ||
+      !form.birthDate
+    ) {
+      setError(
+        "Le nom complet, la CIN, le téléphone et la date de naissance sont obligatoires."
+      );
+      return;
+    }
+
+    // Vérification supplémentaire côté frontend.
+    if (!/^[0-9]+$/.test(form.phone)) {
+      setError("Le téléphone doit contenir uniquement des chiffres.");
       return;
     }
 
@@ -158,8 +176,8 @@ export default function Patients({ onLogout }) {
       full_name: form.fullName.trim(),
       cin: form.cin.trim(),
       phone: form.phone.trim(),
-      birth_date: form.birthDate || null,
-      address: form.address.trim(),
+      birth_date: form.birthDate,
+      address: form.address.trim() || null,
     };
 
     setSaving(true);
@@ -491,30 +509,38 @@ export default function Patients({ onLogout }) {
                     value={form.cin}
                     onChange={handleChange}
                     required
-                    maxLength={30}
-                  />
-                </label>
-
-                <label className="patients-form-field">
-                  <span className="patients-label-text">Téléphone</span>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
-                    onChange={handleChange}
-                    maxLength={30}
+                    maxLength={50}
                   />
                 </label>
 
                 <label className="patients-form-field">
                   <span className="patients-label-text">
-                    Date de naissance
+                    Téléphone <span className="required-star">*</span>
+                  </span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                    maxLength={15}
+                    inputMode="numeric"
+                    pattern="[0-9]+"
+                    
+                  />
+                </label>
+
+                <label className="patients-form-field">
+                  <span className="patients-label-text">
+                    Date de naissance{" "}
+                    <span className="required-star">*</span>
                   </span>
                   <input
                     type="date"
                     name="birthDate"
                     value={form.birthDate}
                     onChange={handleChange}
+                    required
                   />
                 </label>
 
