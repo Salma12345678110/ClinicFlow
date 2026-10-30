@@ -1,3 +1,4 @@
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
@@ -35,26 +36,30 @@ app.use((req, res) => {
   });
 });
 
-// Vérification de la connexion PostgreSQL
-pool.query('SELECT NOW()')
-  .then((result) => {
+// Exporter l'application pour Supertest
+module.exports = app;
+
+// Démarrer le serveur uniquement en exécution directe
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+
+  pool.query('SELECT NOW()')
+    .then((result) => {
+      console.log(
+        'Base de données connectée !',
+        result.rows[0]
+      );
+    })
+    .catch((error) => {
+      console.error(
+        'Erreur de connexion à PostgreSQL :',
+        error.message
+      );
+    });
+
+  app.listen(PORT, () => {
     console.log(
-      'Base de données connectée !',
-      result.rows[0]
-    );
-  })
-  .catch((error) => {
-    console.error(
-      'Erreur de connexion à PostgreSQL :',
-      error.message
+      `Serveur ClinicFlow démarré sur le port ${PORT}`
     );
   });
-
-// Démarrage du serveur
-const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(
-    `Serveur ClinicFlow démarré sur le port ${PORT}`
-  );
-});
+}

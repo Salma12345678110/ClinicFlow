@@ -1,36 +1,61 @@
-# ClinicFlow — Application de gestion de clinique
+# ClinicFlow — Gestion de clinique
 
 ## 1. Présentation du projet
 
-ClinicFlow est une application web de gestion de clinique développée avec React, Node.js, Express.js et PostgreSQL.
+ClinicFlow est une application web de gestion de clinique développée avec la stack PERN : PostgreSQL, Express.js, React et Node.js.
 
-Elle permet de gérer les patients, les rendez-vous et les utilisateurs, avec un système d'authentification et de contrôle des autorisations.
+Elle permet de gérer les patients, les rendez-vous et les utilisateurs, ainsi que de consulter les principales statistiques de la clinique.
 
 ## 2. Technologies utilisées
 
-- **Frontend :** React et Vite
-- **Backend :** Node.js et Express.js
-- **Base de données :** PostgreSQL
-- **Accès à la base de données :** pg
-- **Authentification :** JWT
-- **Hachage des mots de passe :** bcrypt
-- **Validation des données :** Zod
-- **Développement :** Nodemon
-- **Conteneurisation :** Docker et Docker Compose
+| Technologie | Utilisation |
+|---|---|
+| React et Vite | Développement du frontend |
+| Node.js | Environnement d'exécution backend |
+| Express.js | Création de l'API REST |
+| PostgreSQL | Gestion de la base de données |
+| pg | Connexion à PostgreSQL |
+| JWT | Authentification |
+| bcrypt | Hachage des mots de passe |
+| Zod | Validation des données |
+| Jest | Tests automatisés |
+| Supertest | Tests des routes HTTP |
+| Docker | Conteneurisation de l'application |
+| Docker Compose | Gestion des services conteneurisés |
+| Git et GitHub | Gestion de versions et hébergement du code |
 
-## 3. Fonctionnalités
+## 3. Fonctionnalités principales
 
-- Authentification des utilisateurs.
+### Authentification et gestion des utilisateurs
+
+- Connexion avec email et mot de passe.
+- Authentification avec JWT.
 - Gestion des rôles `admin` et `staff`.
-- Gestion des patients : création, consultation, modification et suppression selon les autorisations.
-- Recherche des patients par nom ou CIN et pagination.
-- Création et consultation des rendez-vous.
-- Filtrage des rendez-vous par date et statut.
-- Modification du statut des rendez-vous.
-- Prévention des conflits entre rendez-vous confirmés pour un même patient.
-- Tableau de bord avec les principales statistiques de la clinique.
+- Protection des routes selon les autorisations.
 
+### Gestion des patients
 
+- Ajouter un patient.
+- Consulter les informations d'un patient.
+- Modifier les informations d'un patient.
+- Supprimer un patient avec les droits administrateur.
+- Rechercher les patients par nom ou CIN.
+- Afficher les patients avec pagination.
+
+### Gestion des rendez-vous
+
+- Créer un rendez-vous.
+- Consulter la liste des rendez-vous.
+- Filtrer les rendez-vous par date et par statut.
+- Modifier le statut d'un rendez-vous : `pending`, `confirmed` ou `cancelled`.
+- Empêcher deux rendez-vous confirmés pour un même patient lorsque leurs horaires sont espacés de moins de 30 minutes.
+
+### Tableau de bord
+
+- Nombre total de patients.
+- Nombre de rendez-vous du jour.
+- Nombre de rendez-vous en attente.
+- Nombre de rendez-vous confirmés.
 
 ## 4. Structure du projet
 
@@ -41,144 +66,147 @@ ClinicFlow/
 │   │   ├── schema.sql
 │   │   └── seed.js
 │   ├── src/
-│   │   ├── app.js
 │   │   ├── config/
 │   │   ├── controllers/
 │   │   ├── middlewares/
 │   │   ├── routes/
-│   │   └── services/
+│   │   ├── services/
+│   │   ├── validators/
+│   │   └── app.js
+│   ├── tests/
 │   ├── .env.example
 │   └── package.json
 ├── frontend/
 ├── docker/
+│   ├── docker-compose.yml
 │   ├── Dockerfile.backend
-│   ├── Dockerfile.frontend
-│   └── docker-compose.yml
+│   └── Dockerfile.frontend
 ├── docs/
 │   └── database-erd.md
 ├── .gitignore
 ├── package.json
-├── package-lock.json
 └── README.md
 ```
 
 ## 5. Prérequis
 
-Pour utiliser l'application avec Docker :
+Avant d'installer le projet, assurez-vous d'avoir :
 
-- Git
-- Docker Desktop
-- Docker Compose
+- Node.js et npm.
+- PostgreSQL.
+- Git.
+- Docker Desktop avec Docker Compose.
 
-Node.js et PostgreSQL peuvent fonctionner dans les conteneurs, sans installation séparée sur l'ordinateur.
+## 6. Installation du projet
 
-Pour une installation manuelle, Node.js, npm et PostgreSQL sont nécessaires.
+### Étape 1 : Récupérer le projet
 
-## 6. Installation et lancement avec Docker
-
-### Étape 1 : Cloner le dépôt
+Cloner le dépôt GitHub :
 
 ```bash
 git clone https://github.com/Salma12345678110/ClinicFlow.git
 cd ClinicFlow
 ```
 
-### Étape 2 : Démarrer Docker Desktop
+### Étape 2 : Créer la base de données
 
-Lancer Docker Desktop et attendre que le moteur Docker soit opérationnel.
+Créer une base de données PostgreSQL nommée `clinicflow`.
 
-### Étape 3 : Démarrer l'application
-
-Depuis la racine du projet, exécuter :
-
-```bash
-docker compose -f ./docker/docker-compose.yml up --build
-```
-
-Cette commande construit les images si nécessaire et démarre les services définis dans le fichier Docker Compose.
-
-Selon la configuration du projet, les services peuvent inclure :
-
-- PostgreSQL : serveur de base de données.
-- Backend : API Node.js et Express.js.
-- Frontend : interface React et Vite.
-
-Le schéma SQL et les données de démonstration sont initialisés uniquement si la configuration Docker prévoit ces opérations.
-
-### Étape 4 : Accéder à l'application
-
-Si les ports indiqués dans la configuration sont ceux utilisés par défaut dans ce projet :
-
-- **Frontend :** http://localhost:5173
-- **Page de connexion :** http://localhost:5173/login
-- **Backend :** http://localhost:5000
-
-Les identifiants de démonstration sont définis dans le script de seed, si celui-ci est exécuté par la configuration.
-
-### Étape 5 : Arrêter l'application
-
-Pour arrêter les conteneurs :
-
-```bash
-docker compose -f ./docker/docker-compose.yml down
-```
-
-Pour supprimer également les volumes associés, notamment les données PostgreSQL :
-
-```bash
-docker compose -f ./docker/docker-compose.yml down -v
-```
-
-**Attention :** la seconde commande peut supprimer définitivement les données enregistrées dans les volumes concernés.
-
-## 7. Installation manuelle
-
-### Étape 1 : Créer la base de données
-
-Créer une base PostgreSQL nommée `clinicflow`, puis exécuter le script SQL depuis la racine du projet :
+Depuis la racine du projet, exécuter le script SQL :
 
 ```bash
 psql -U postgres -d clinicflow -f backend/database/schema.sql
 ```
 
-Cette commande crée les tables, les contraintes et les index définis dans le schéma.
+Ce script permet de créer les tables, les relations, les contraintes et les index nécessaires au fonctionnement de l'application.
 
-### Étape 2 : Installer les dépendances du backend
+### Étape 3 : Installer et configurer le backend
+
+Accéder au dossier backend :
 
 ```bash
 cd backend
+```
+
+Installer les dépendances :
+
+```bash
 npm install
 ```
 
-### Étape 3 : Configurer les variables d'environnement
+Créer un fichier `.env` à partir du fichier `.env.example`, puis renseigner les informations de connexion à PostgreSQL et le secret JWT.
 
-Créer un fichier `.env` dans le dossier `backend`, en s'inspirant du fichier `.env.example`.
+### Étape 4 : Insérer les données de test
 
-Exemple de configuration :
+Depuis le dossier `backend`, exécuter :
 
-```env
-PORT=5000
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=clinicflow
-DB_USER=postgres
-DB_PASSWORD=your_postgres_password
-JWT_SECRET=your_long_random_secret
+```bash
+node database/seed.js
 ```
 
-Remplacer les valeurs d'exemple par celles de votre environnement.
+Ce script insère les données de démonstration :
 
-- `PORT` : port du serveur backend.
-- `DB_HOST` : adresse du serveur PostgreSQL.
-- `DB_PORT` : port PostgreSQL.
-- `DB_NAME` : nom de la base de données.
-- `DB_USER` : utilisateur PostgreSQL.
-- `DB_PASSWORD` : mot de passe PostgreSQL.
-- `JWT_SECRET` : secret utilisé pour signer les jetons JWT.
+- Un administrateur.
+- Deux utilisateurs staff.
+- Cinq patients.
+- Dix rendez-vous avec différents statuts.
 
-Ne jamais publier le fichier `.env` contenant des informations sensibles.
+Les mots de passe sont hachés avec bcrypt avant leur enregistrement dans la base de données.
 
-### Étape 4 : Lancer le backend
+### Étape 5 : Installer le frontend
+
+Ouvrir un nouveau terminal et accéder au dossier frontend depuis la racine du projet :
+
+```bash
+cd frontend
+```
+
+Installer les dépendances :
+
+```bash
+npm install
+```
+
+## 7. Variables d'environnement
+
+Le backend utilise les variables d'environnement suivantes :
+
+| Variable | Description |
+|---|---|
+| `PORT` | Port du serveur backend |
+| `DB_HOST` | Adresse du serveur PostgreSQL |
+| `DB_PORT` | Port PostgreSQL |
+| `DB_NAME` | Nom de la base de données |
+| `DB_USER` | Utilisateur PostgreSQL |
+| `DB_PASSWORD` | Mot de passe PostgreSQL |
+| `JWT_SECRET` | Secret utilisé pour signer les jetons JWT |
+
+Le fichier `.env.example` fournit un modèle de configuration sans informations confidentielles.
+
+
+## 8. Lancement de l'application
+
+### Lancement avec Docker Compose
+
+Docker Compose permet de construire et de lancer les services définis dans le fichier `docker-compose.yml`.
+
+Depuis la racine du projet, exécuter :
+
+```bash
+docker compose -f docker/docker-compose.yml up --build
+```
+
+Pour arrêter les services :
+
+```bash
+docker compose -f docker/docker-compose.yml down
+```
+
+### Lancement sans Docker
+
+Le frontend et le backend peuvent également être lancés séparément dans deux terminaux.
+
+**Lancer le backend :**
 
 Depuis le dossier `backend` :
 
@@ -186,62 +214,80 @@ Depuis le dossier `backend` :
 npm run dev
 ```
 
-Pour un lancement standard, si le script correspondant existe :
+**Lancer le frontend :**
+
+Depuis le dossier `frontend` :
 
 ```bash
-npm start
-```
-
-### Étape 5 : Installer et lancer le frontend
-
-Ouvrir un deuxième terminal, depuis la racine du projet :
-
-```bash
-cd frontend
-npm install
 npm run dev
 ```
 
-Si nécessaire, configurer `VITE_API_URL` selon le mécanisme utilisé par le frontend. Pour une API accessible localement, l'URL de base peut être :
+Les adresses d'accès dépendent des ports configurés dans le projet.
 
-```env
-VITE_API_URL=http://localhost:5000/api
-```
+## 9. Principales routes API
 
-Vérifier que le code frontend utilise bien cette variable et que le backend autorise les requêtes provenant de l'origine du frontend.
+Les routes protégées nécessitent un token JWT valide.
 
-## 8. Base de données
+| Méthode | Route | Description | Autorisation |
+|---|---|---|---|
+| POST | `/api/auth/login` | Connexion | Public |
+| GET | `/api/auth/me` | Informations de l'utilisateur connecté | Authentifié |
+| POST | `/api/patients` | Ajouter un patient | Authentifié |
+| GET | `/api/patients` | Lister les patients | Authentifié |
+| GET | `/api/patients/:id` | Consulter un patient | Authentifié |
+| PUT | `/api/patients/:id` | Modifier un patient | Authentifié |
+| DELETE | `/api/patients/:id` | Supprimer un patient | Admin uniquement |
+| POST | `/api/appointments` | Créer un rendez-vous | Authentifié |
+| GET | `/api/appointments` | Lister les rendez-vous | Authentifié |
+| PATCH | `/api/appointments/:id/status` | Modifier le statut d'un rendez-vous | Authentifié |
 
-La base de données comprend les tables suivantes :
+## 10. Documentation de la base de données
 
-- **users :** comptes utilisateurs, adresses email et rôles.
-- **patients :** informations personnelles des patients.
-- **appointments :** rendez-vous, dates, statuts et relations avec les patients et les utilisateurs.
+Le fichier `docs/database-erd.md` contient :
 
-Le script de création des tables est disponible dans `backend/database/schema.sql`.
+- Le diagramme entité-association (ERD).
+- La description des tables.
+- Les relations entre les tables.
+- Les contraintes d'intégrité.
+- Les règles de gestion des données.
 
-Le diagramme entité-relation et la description des relations sont disponibles dans `docs/database-erd.md`.
+La base de données comprend trois tables principales :
 
-Pour initialiser les données de démonstration, exécuter le script prévu à cet effet si nécessaire :
+- `users` : informations des utilisateurs et leurs rôles.
+- `patients` : informations des patients.
+- `appointments` : rendez-vous associés aux patients et aux utilisateurs.
+
+Les relations entre les tables permettent de garantir la cohérence des données.
+
+## 11. Tests
+
+Les tests automatisés du backend sont réalisés avec Jest et Supertest.
+
+Pour exécuter les tests, depuis le dossier `backend` :
 
 ```bash
-cd backend
-node database/seed.js
+npm test
 ```
 
-Cette commande suppose que le fichier `.env` est correctement configuré et que PostgreSQL est accessible.
+La suite de tests actuelle comprend :
 
-## 9. Sécurité
+- 12 suites de tests réussies.
+- 59 tests réussis.
 
-- Hachage des mots de passe avec bcrypt.
-- Authentification par JWT.
-- Contrôle des autorisations selon le rôle.
-- Validation des données avec Zod.
-- Contraintes SQL pour préserver l'intégrité des données.
-- Utilisation de variables d'environnement pour les informations sensibles.
+Les tests couvrent notamment l'authentification, la gestion des patients, les rendez-vous et la règle métier des 30 minutes.
 
-Les mots de passe et secrets de démonstration sont réservés au développement. Ils doivent être remplacés par des valeurs sécurisées avant toute mise en production.
+## 12. Sécurité
 
-## 10. Auteur
+L'application intègre plusieurs mécanismes de sécurité :
 
-**ClinicFlow** — Projet de développement Full Stack pour la gestion d'une clinique.
+- Les mots de passe sont hachés avec bcrypt.
+- Les routes protégées utilisent JWT.
+- Les autorisations sont contrôlées selon le rôle de l'utilisateur.
+- Les données reçues sont validées avec Zod.
+- Les clés étrangères et les contraintes SQL protègent l'intégrité des données.
+- Les informations sensibles sont conservées dans des variables d'environnement.
+
+## 13. Auteur
+
+**Projet :** ClinicFlow — Gestion de clinique  
+**Type :** Test technique de développement Full Stack
