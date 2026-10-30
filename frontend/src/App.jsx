@@ -10,6 +10,7 @@ import {
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Patients from "./pages/Patients";
+import PatientDetails from "./pages/PatientDetails";
 import Appointments from "./pages/Appointments";
 
 function AppContent() {
@@ -36,7 +37,6 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* Page de connexion */}
       <Route
         path="/login"
         element={
@@ -48,7 +48,6 @@ function AppContent() {
         }
       />
 
-      {/* Tableau de bord */}
       <Route
         path="/dashboard"
         element={
@@ -60,7 +59,6 @@ function AppContent() {
         }
       />
 
-      {/* Gestion des patients */}
       <Route
         path="/patients"
         element={
@@ -72,7 +70,18 @@ function AppContent() {
         }
       />
 
-      {/* Gestion des rendez-vous */}
+      {/* Fiche détaillée d'un patient */}
+      <Route
+        path="/patients/:id"
+        element={
+          user ? (
+            <PatientDetails />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+
       <Route
         path="/appointments"
         element={
@@ -84,7 +93,6 @@ function AppContent() {
         }
       />
 
-      {/* Redirection des autres adresses */}
       <Route
         path="*"
         element={

@@ -1,4 +1,6 @@
+
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../services/api";
 import "./Patients.css";
 
@@ -38,6 +40,8 @@ function formatDate(date) {
 }
 
 export default function Patients({ onLogout }) {
+  const navigate = useNavigate();
+
   const [patients, setPatients] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -138,8 +142,6 @@ export default function Patients({ onLogout }) {
   function handleChange(event) {
     const { name, value } = event.target;
 
-    // Le téléphone accepte uniquement les chiffres.
-    // Les autres champs restent inchangés.
     const newValue =
       name === "phone" ? value.replace(/\D/g, "") : value;
 
@@ -166,7 +168,6 @@ export default function Patients({ onLogout }) {
       return;
     }
 
-    // Vérification supplémentaire côté frontend.
     if (!/^[0-9]+$/.test(form.phone)) {
       setError("Le téléphone doit contenir uniquement des chiffres.");
       return;
@@ -395,6 +396,16 @@ export default function Patients({ onLogout }) {
                       <div className="patients-row-actions">
                         <button
                           type="button"
+                          className="patients-view-button"
+                          onClick={() =>
+                            navigate(`/patients/${patient.id}`)
+                          }
+                        >
+                          Voir
+                        </button>
+
+                        <button
+                          type="button"
                           className="patients-edit-button"
                           onClick={() => openEditModal(patient)}
                         >
@@ -526,7 +537,6 @@ export default function Patients({ onLogout }) {
                     maxLength={15}
                     inputMode="numeric"
                     pattern="[0-9]+"
-                    
                   />
                 </label>
 

@@ -1,0 +1,284 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --details-primary: #0d9488;
+  --details-primary-dark: #0f766e;
+  --details-text: #172b4d;
+  --details-muted: #64748b;
+  --details-border: #e2e8f0;
+  --details-bg: #f4f7fb;
+}
+
+.patient-details-page,
+.patient-details-page * {
+  box-sizing: border-box;
+}
+
+.patient-details-page {
+  min-height: 100vh;
+  padding: 32px;
+  background: var(--details-bg);
+  color: var(--details-text);
+  font-family: "Inter", sans-serif;
+}
+
+/* En-tête */
+
+.patient-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+  padding: 28px;
+  border: 1px solid var(--details-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.patient-details-eyebrow {
+  margin: 0 0 8px;
+  color: var(--details-primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.patient-details-header h1 {
+  margin: 0 0 8px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+}
+
+.patient-details-header p:not(.patient-details-eyebrow) {
+  margin: 0;
+  color: var(--details-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Cartes */
+
+.patient-details-card {
+  margin-bottom: 24px;
+  padding: 26px;
+  border: 1px solid var(--details-border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+}
+
+.patient-details-card h2 {
+  margin: 0 0 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--details-border);
+  color: var(--details-text);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* Informations personnelles */
+
+.patient-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 30px;
+}
+
+.patient-details-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.patient-details-grid span {
+  color: var(--details-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.patient-details-grid strong {
+  overflow-wrap: anywhere;
+  color: var(--details-text);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.patient-details-full {
+  grid-column: 1 / -1;
+}
+
+/* Tableau des rendez-vous */
+
+.patient-details-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.patient-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.patient-details-table thead {
+  background: #f8fafc;
+}
+
+.patient-details-table th {
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--details-border);
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.patient-details-table td {
+  padding: 16px 18px;
+  border-bottom: 1px solid #edf1f5;
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.6;
+  vertical-align: middle;
+}
+
+.patient-details-table tbody tr {
+  transition: background 0.15s;
+}
+
+.patient-details-table tbody tr:hover {
+  background: #f8fcfb;
+}
+
+.patient-details-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Statuts des rendez-vous */
+
+.patient-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 90px;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.patient-status-confirmed {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.patient-status-pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.patient-status-cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Chargement et messages */
+
+.patient-details-message {
+  margin: 0;
+  padding: 24px;
+  color: var(--details-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.patient-details-error {
+  margin: 0 0 18px;
+  padding: 15px 18px;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  background: #fef2f2;
+  color: #b91c1c;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Tablettes */
+
+@media (max-width: 900px) {
+  .patient-details-page {
+    padding: 20px;
+  }
+
+  .patient-details-header {
+    padding: 22px;
+  }
+
+  .patient-details-card {
+    padding: 22px;
+  }
+}
+
+/* Mobiles */
+
+@media (max-width: 600px) {
+  .patient-details-page {
+    padding: 12px;
+  }
+
+  .patient-details-header {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 19px;
+  }
+
+  .patient-details-header h1 {
+    font-size: 22px;
+  }
+
+  .patient-details-card {
+    padding: 19px 16px;
+  }
+
+  .patient-details-card h2 {
+    font-size: 16px;
+  }
+
+  .patient-details-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .patient-details-full {
+    grid-column: auto;
+  }
+
+  .patient-details-table th,
+  .patient-details-table td {
+    padding: 13px 12px;
+  }
+}
+
+/* Accessibilité */
+
+@media (prefers-reduced-motion: reduce) {
+  .patient-details-page *,
+  .patient-details-page *::before,
+  .patient-details-page *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
